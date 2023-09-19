@@ -65,3 +65,14 @@ sample_sd(x)
 mean(x)
 sd(x)
 ```
+
+#### Part 1C: Confidence intervals
+```{r part1C}
+# define a function calculate_CI(x, conf) that calculates the confidence interval for a vector of data of length N
+# parameter
+# x : a vector of numbers of length N
+# conf : = (1-alpha) allows the confidence interval to be adapted for different alpha, with a default value of 0.95
+calculate_CI <- function(x, conf = 0.95) {
+  
+}
+```
