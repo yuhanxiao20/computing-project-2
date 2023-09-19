@@ -6,3 +6,32 @@ date: "2023-10-01"
 ---
 
 ## Background 
+```{r message = FALSE}
+```
+
+## Part 1: Fun with functions
+#### Part 1A: Exponential transformation
+```{r part1A}
+# define a function that computes the exponential of a number using the truncated series expansion
+# parameters
+# x : the number to be exponentiated
+# k : the number of terms to be used in the series expansion beyond the constant 1, k is always >= 1
+Exp <- function(x,k) {
+  output = 1
+  count = 1
+  while (count <= k) {
+    output = output + (x^count)/factorial(count)
+    count = count + 1
+  }
+  output
+}
+
+# an example using function Exp(x,k)
+Exp(2,15)
+# compare with actual exp() function in R
+exp(2)
+```
+
+#### Part 1B: Sample mean and sample standard deviation
+```{r part1B}
+```
