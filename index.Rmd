@@ -12,7 +12,7 @@ date: "2023-10-01"
 ## Part 1: Fun with functions
 #### Part 1A: Exponential transformation
 ```{r part1A}
-# define a function that computes the exponential of a number using the truncated series expansion
+# define a function Exp(x,k) that computes the exponential of a number using the truncated series expansion
 # parameters
 # x : the number to be exponentiated
 # k : the number of terms to be used in the series expansion beyond the constant 1, k is always >= 1
@@ -34,4 +34,34 @@ exp(2)
 
 #### Part 1B: Sample mean and sample standard deviation
 ```{r part1B}
+# define a function sample_mean(x) that calculates the sample average for a vector of data of length N
+# parameter
+# x : a vector of numbers of length N
+sample_mean <- function(x) {
+  N = length(x)
+  output = sum(x) / N
+  output
+} 
+
+# define a function sample_sd(x) that calculates the sample standard deviation for a vector of data of length N
+# parameter
+# x : a vector of numbers of length N
+sample_sd <- function(x) {
+  N = length(x)
+  avg = sum(x) / N
+  output = 0
+  for (i in 1:N) {
+    output = output + (x[i] - avg)^2
+  }
+  output = sqrt(output/(N-1))
+  output
+}
+
+# an example using functions sample_mean(x) and sample_sd(x)
+x = c(1,2)
+sample_mean(x)
+sample_sd(x)
+# compare with actual mean() and sd() functions in R
+mean(x)
+sd(x)
 ```
