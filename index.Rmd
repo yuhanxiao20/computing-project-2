@@ -7,11 +7,14 @@ date: "2023-10-01"
 
 ## Background 
 ```{r message = FALSE}
+library(here)
+library(tidyverse)
+library(lubridate)
 ```
 
 ## Part 1: Fun with functions
 #### Part 1A: Exponential transformation
-```{r part1A}
+```{r part_1A}
 # define a function Exp(x,k) that computes the exponential of a number using the truncated series expansion
 # parameters
 # x : the number to be exponentiated
@@ -33,7 +36,7 @@ exp(2)
 ```
 
 #### Part 1B: Sample mean and sample standard deviation
-```{r part1B}
+```{r part_1B}
 # define a function sample_mean(x) that calculates the sample average for a vector of data of length N
 # parameter
 # x : a vector of numbers of length N
@@ -67,7 +70,7 @@ sd(x)
 ```
 
 #### Part 1C: Confidence intervals
-```{r part1C}
+```{r part_1C}
 # define a function calculate_CI(x, conf) that calculates the confidence interval for a vector of data of length N
 # parameter
 # x : a vector of numbers of length N
@@ -91,4 +94,48 @@ dat <- data.frame(x = x)
 fit <- lm(x ~ 1, dat)
 ## Calculate a 95% confidence interval
 confint(fit, level = 0.95)
+```
+
+## Part 2: Wrangling data
+```{r part_2_setup}
+# read in the following data from TidyTuesday
+if (!file.exists(here("data", "tuesdata_rainfall.RDS"))) {
+    tuesdata <- tidytuesdayR::tt_load("2020-01-07")
+    rainfall <- tuesdata$rainfall
+    temperature <- tuesdata$temperature
+
+    # save the files to RDS objects
+    saveRDS(tuesdata$rainfall, file = here("data", "tuesdata_rainfall.RDS"))
+    saveRDS(tuesdata$temperature, file = here("data", "tuesdata_temperature.RDS"))
+}
+
+# load the datasets
+rainfall <- readRDS(here("data", "tuesdata_rainfall.RDS"))
+temperature <- readRDS(here("data", "tuesdata_temperature.RDS"))
+
+# take a look at the data
+glimpse(rainfall)
+glimpse(temperature)
+```
+
+```{r part_2_tasks}
+df <- rainfall %>%
+  na.omit() %>% # drop any rows with NAs
+  mutate(date = ymd(paste(year, month, day, sep = "-"))) %>% # create a new column that combines year, month, day
+  select(-(month:day)) %>% # drop columns month and year
+  mutate(city_name = toupper(city_name)) # convert city names to all upper case
+
+# join this wrangled rainfall dataset with the temperature dataset
+df <- df %>%
+  inner_join(temperature, by = c("city_name", "date"), relationship = "many-to-many")
+
+# check datasets
+# glimpse(df)
+# sum(duplicated(df[c("city_name","date")]))
+# sum(duplicated(temperature[c("city_name","date")]))
+# sum(duplicated(rainfall))
+```
+
+## Part 3: Data visualization
+```{r part_3}
 ```
