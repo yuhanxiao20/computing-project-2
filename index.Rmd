@@ -157,4 +157,49 @@ ggplot(data, aes(x = date, y = temperature, color = temp_type)) +
 
 #### Part 3B: Plotting rainfall over time
 ```{r part_3B}
+# define a function that plots a histogram of rainfall distribution for a given city in a given year
+# parameters
+# city : the given city (all upper case)
+# yr : the given year
+# description
+# ?????/
+plot_rainfall <- function(city, yr) {
+  # check if user inputs are valid
+  city_names <- unique(df$city_name)
+  year_range <- unique(df$year)
+  if (!(city %in% city_names)) {
+    stop(paste(city, " does not exist in the dataset", sep = ""))
+  } else if (!(yr %in% year_range)) {
+    stop(paste(yr, " does not exist in the dataset", sep = ""))
+  }
+  
+  # select data with the given city and year
+  data <- df %>%
+    filter(city_name == city, year == yr)
+  # check if the combination of city and year has measurements
+  if (nrow(data) == 0) {
+    stop(paste("The combination of ", city, " and ", yr, " does not have measurements", sep = ""))
+  }
+  
+  # plot the histogram
+  hist_plot <- data %>%
+    ggplot(aes(log(rainfall))) +
+    geom_histogram(binwidth = 0.5, color = "#FAAB18", fill = "#FAAB18") +
+    labs(title=paste("Distribution of Rainfall (Log Scale) for ",city, " in Year ", yr, sep=""), subtitle="key trends summary", caption="Yuhan Xiao", x = "Rainfall (log scale)", y = "Frequency") +
+    theme_minimal(base_size = 14) +
+    theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15))
+  hist_plot
+}
+
+# an example of using plot_rainfall(city, yr)
+plot_rainfall("PERTH", 1970)
+```
+
+## Part 4: Apply functions and plot
+#### Part 4A
+```{r part_4A}
+```
+
+#### Part 4B
+```{r part_4B}
 ```
