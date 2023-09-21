@@ -10,6 +10,7 @@ date: "2023-10-01"
 library(here)
 library(tidyverse)
 library(lubridate)
+library(ggplot2)
 ```
 
 ## Part 1: Fun with functions
@@ -137,5 +138,23 @@ df <- df %>%
 ```
 
 ## Part 3: Data visualization
-```{r part_3}
+#### Part 3A: Plotting temperature data over time
+```{r part_3A}
+# filter out rows with years 2014 and onwards
+data <- df %>%
+  filter(year >= 2014)
+
+# make a line plot of the max and min temperature over time for each city
+ggplot(data, aes(x = date, y = temperature, color = temp_type)) +
+  geom_line(size = 1) +
+  scale_colour_manual(values = c("#FAAB18", "#1380A1")) +
+  facet_wrap(~city_name, nrow = 3, scales="fixed") +
+  labs(title="Maximum and Minimum Temperature Changes over Time Per City", subtitle="key trends summary", caption="Yuhan Xiao", x = "Year", y = "Temperature") +
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15), 
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+#### Part 3B: Plotting rainfall over time
+```{r part_3B}
 ```
