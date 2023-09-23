@@ -24,7 +24,7 @@ Exp <- function(x,k) {
   output = 1
   count = 1
   while (count <= k) {
-    output = output + (x^count)/factorial(count)
+    output = output + (x ^ count) / factorial(count)
     count = count + 1
   }
   output
@@ -53,16 +53,12 @@ sample_mean <- function(x) {
 sample_sd <- function(x) {
   N = length(x)
   avg = sum(x) / N
-  output = 0
-  for (i in 1:N) {
-    output = output + (x[i] - avg)^2
-  }
-  output = sqrt(output/(N-1))
+  output = sqrt(sum((x - avg) ^ 2) / (N - 1))
   output
 }
 
 # an example using functions sample_mean(x) and sample_sd(x)
-x = c(1,2)
+x = c(1,2,3,4)
 sample_mean(x)
 sample_sd(x)
 # compare with actual mean() and sd() functions in R
@@ -82,19 +78,22 @@ calculate_CI <- function(x, conf = 0.95) {
   degrees_freedom = N - 1
   t_score = qt(p = alpha / 2, df = degrees_freedom, lower.tail = FALSE)
   avg = mean(x)
-  se = sd(x)/sqrt(N)
-  output = c(avg - t_score*se, avg + t_score*se)
+  se = sd(x) / sqrt(N)
+  output = c(avg - t_score * se, avg + t_score * se)
+  names(output) = c("lower_bound", "upper_bound")
   output
 }
 
-# an example using calculate_CI(x, conf)
+# examples using calculate_CI(x, conf)
 x = c(1,2,3,4,5,6)
-calculate_CI(x)
+calculate_CI(x, 0.9)
+calculate_CI(x, 0.5)
 # compare with existing confint() function in R
 dat <- data.frame(x = x)
 fit <- lm(x ~ 1, dat)
-## Calculate a 95% confidence interval
-confint(fit, level = 0.95)
+## Calculate the confidence interval
+confint(fit, level = 0.9)
+confint(fit, level = 0.5)
 ```
 
 ## Part 2: Wrangling data
@@ -123,18 +122,15 @@ glimpse(temperature)
 df <- rainfall %>%
   na.omit() %>% # drop any rows with NAs
   mutate(date = ymd(paste(year, month, day, sep = "-"))) %>% # create a new column that combines year, month, day
-  select(-(month:day)) %>% # drop columns month and year
+  select(-(month:day)) %>% # drop columns month and day
   mutate(city_name = toupper(city_name)) # convert city names to all upper case
 
 # join this wrangled rainfall dataset with the temperature dataset
 df <- df %>%
   inner_join(temperature, by = c("city_name", "date"), relationship = "many-to-many")
 
-# check datasets
-# glimpse(df)
-# sum(duplicated(df[c("city_name","date")]))
-# sum(duplicated(temperature[c("city_name","date")]))
-# sum(duplicated(rainfall))
+# take a look at the wrangled data
+glimpse(df)
 ```
 
 ## Part 3: Data visualization
@@ -145,14 +141,17 @@ data <- df %>%
   filter(year >= 2014)
 
 # make a line plot of the max and min temperature over time for each city
-ggplot(data, aes(x = date, y = temperature, color = temp_type)) +
-  geom_line(size = 1) +
+data %>%
+  ggplot(aes(x = date, y = temperature, color = temp_type)) +
+  geom_line(linewidth = 1) +
   scale_colour_manual(values = c("#FAAB18", "#1380A1")) +
-  facet_wrap(~city_name, nrow = 3, scales="fixed") +
-  labs(title="Maximum and Minimum Temperature Changes over Time Per City", subtitle="key trends summary", caption="Yuhan Xiao", x = "Year", y = "Temperature") +
+  facet_wrap(~city_name, nrow = 3, scales = "fixed") +
+  labs(title = "Maximum and Minimum Temperature Changes Per City in 2014-2019", subtitle = "Cities in Australia are coldest around the middle of each year and warmest around the end of each year.\n Temperatures in Canberra fluctuate the most from about 40°C to -10°C.\n Sydney has the highest mininum temperature of about 5°C.", caption = "Yuhan Xiao", x = "Time (date)", y = "Temperature (Celsius)") +
   theme_minimal(base_size = 14) +
-  theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15), 
-        axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        plot.background = element_rect(fill = "white"),
+        text = element_text(family = "Times"))
 ```
 
 #### Part 3B: Plotting rainfall over time
@@ -162,7 +161,7 @@ ggplot(data, aes(x = date, y = temperature, color = temp_type)) +
 # city : the given city (all upper case)
 # yr : the given year
 # description
-# ?????/
+# My plot_rainfall function first checks if user inputs can be matched from the df dataset. If not, the function returns an error message. Then it filters out rows with years 2014 and onward. It checks if the combination of user inputs have measurements in the dataset. If not, it returns an error message. Otherwise, the function plots a histogram for the distribution of rainfall for a given city in a given year. It returns this plot.
 plot_rainfall <- function(city, yr) {
   # check if user inputs are valid
   city_names <- unique(df$city_name)
@@ -185,14 +184,16 @@ plot_rainfall <- function(city, yr) {
   hist_plot <- data %>%
     ggplot(aes(log(rainfall))) +
     geom_histogram(binwidth = 0.5, color = "#FAAB18", fill = "#FAAB18") +
-    labs(title=paste("Distribution of Rainfall (Log Scale) for ",city, " in Year ", yr, sep=""), subtitle="key trends summary", caption="Yuhan Xiao", x = "Rainfall (log scale)", y = "Frequency") +
+    labs(title = paste("Distribution of Rainfall (Log Scale) for ",city, " in Year ", yr, sep=""), caption = "Yuhan Xiao", x = "Log(rainfall) (millimeters)", y = "Frequency (days)") +
     theme_minimal(base_size = 14) +
-    theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15))
+    theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15),
+          text = element_text(family = "Times"))
   hist_plot
 }
 
 # an example of using plot_rainfall(city, yr)
-plot_rainfall("PERTH", 1970)
+plot_rainfall("PERTH", 2000) +
+  labs(subtitle = "Most days had log(rainfall) between 0 to 3 millimeters")
 ```
 
 ## Part 4: Apply functions and plot
@@ -206,6 +207,9 @@ rain_df <- df %>%
          rainfall_sd = sample_sd(rainfall),
          rainfall_lower_bound = calculate_CI(rainfall)[1],
          rainfall_upper_bound = calculate_CI(rainfall)[2])
+
+# take a look at the data
+glimpse(rain_df)
 ```
 
 #### Part 4B
@@ -217,7 +221,8 @@ rain_df %>%
   geom_point(color = "#FAAB18") +
   geom_line(color = "#FAAB18") +
   geom_errorbar(aes(ymin = rainfall_lower_bound, ymax = rainfall_upper_bound), width = 0.5, color = "#1380A1") +
-  labs(title = "Estimates of Mean Rainfall and the 95% Confidence Intervals for Each City", subtitle="key trends summary", caption="Yuhan Xiao", x = "year", y = "average rainfall") + 
+  labs(title = "Estimates of Mean Rainfall and the 95% Confidence Intervals for Each City in 2014-2019", subtitle="Canberra has the least rainfall on average. It rains roughly the same throughout each year.\n Perth has the most rainfall on average. The amount of rainfall varies greatly within each year.\n ", caption="Yuhan Xiao", x = "Time (year)", y = "Average rainfall (millimeters)") + 
   theme_minimal(base_size = 14) +
-  theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15))
+  theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15),
+          text = element_text(family = "Times"))
 ```
