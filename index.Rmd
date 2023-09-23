@@ -198,8 +198,26 @@ plot_rainfall("PERTH", 1970)
 ## Part 4: Apply functions and plot
 #### Part 4A
 ```{r part_4A}
+# calculate sample mean, standard deviation, 95% confidence interval for the average rainfall per city by year
+rain_df <- df %>% 
+  filter(year >= 2014) %>%
+  group_by(city_name, year) %>%
+  mutate(rainfall_mean = sample_mean(rainfall),
+         rainfall_sd = sample_sd(rainfall),
+         rainfall_lower_bound = calculate_CI(rainfall)[1],
+         rainfall_upper_bound = calculate_CI(rainfall)[2])
 ```
 
 #### Part 4B
 ```{r part_4B}
+# plot the estimates of mean rainfall and the 95% confidence intervals for each city
+rain_df %>%
+  ggplot(aes(x = year, y = rainfall_mean)) +
+  facet_wrap(~city_name, nrow=3, scales="fixed") +
+  geom_point(color = "#FAAB18") +
+  geom_line(color = "#FAAB18") +
+  geom_errorbar(aes(ymin = rainfall_lower_bound, ymax = rainfall_upper_bound), width = 0.5, color = "#1380A1") +
+  labs(title = "Estimates of Mean Rainfall and the 95% Confidence Intervals for Each City", subtitle="key trends summary", caption="Yuhan Xiao", x = "year", y = "average rainfall") + 
+  theme_minimal(base_size = 14) +
+  theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15))
 ```
