@@ -146,7 +146,7 @@ data %>%
   geom_line(linewidth = 1) +
   scale_colour_manual(values = c("#FAAB18", "#1380A1")) +
   facet_wrap(~city_name, nrow = 3, scales = "fixed") +
-  labs(title = "Maximum and Minimum Temperature Changes Per City in 2014-2019", subtitle = "Cities in Australia are coldest around the middle of each year and warmest around the end of each year.\n Temperatures in Canberra fluctuate the most from about 40°C to -10°C.\n Sydney has the highest mininum temperature of about 5°C.", caption = "Yuhan Xiao", x = "Time (date)", y = "Temperature (Celsius)") +
+  labs(title = "Maximum and Minimum Temperature Changes Per City in 2014-2019", subtitle = "Cities in Australia are coldest around the middle of each year and warmest around the end of each year.\n Temperatures in Canberra fluctuate the most from about 40°C to -10°C.\n Sydney has the highest mininum temperature of about 5°C.", caption = "Yuhan Xiao", x = "Time (date)", y = "Temperature (Celsius)", color = "temp type") +
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size = 15), 
         axis.text.x = element_text(angle = 45, hjust = 1),
