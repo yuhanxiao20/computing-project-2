@@ -203,11 +203,11 @@ plot_rainfall("PERTH", 2000) +
 rain_df <- df %>% 
   filter(year >= 2014) %>%
   group_by(city_name, year) %>%
-  mutate(rainfall_mean = sample_mean(rainfall),
+  summarize(rainfall_mean = sample_mean(rainfall),
          rainfall_sd = sample_sd(rainfall),
          rainfall_lower_bound = calculate_CI(rainfall)[1],
          rainfall_upper_bound = calculate_CI(rainfall)[2])
-
+  
 # take a look at the data
 glimpse(rain_df)
 ```
