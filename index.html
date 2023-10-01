@@ -601,10 +601,10 @@ plot_rainfall(&quot;PERTH&quot;, 2000) +
 rain_df &lt;- df %&gt;% 
   filter(year &gt;= 2014) %&gt;%
   group_by(city_name, year) %&gt;%
-  summarize(rainfall_mean = sample_mean(rainfall),
-         rainfall_sd = sample_sd(rainfall),
-         rainfall_lower_bound = calculate_CI(rainfall)[1],
-         rainfall_upper_bound = calculate_CI(rainfall)[2])</code></pre>
+  summarize(sample_mean = sample_mean(rainfall),
+         sample_sd = sample_sd(rainfall),
+         lower_bound = calculate_CI(rainfall)[1],
+         upper_bound = calculate_CI(rainfall)[2])</code></pre>
 <pre><code>## `summarise()` has grouped output by &#39;city_name&#39;. You can override using the
 ## `.groups` argument.</code></pre>
 <pre class="r"><code># take a look at the data
@@ -612,22 +612,22 @@ glimpse(rain_df)</code></pre>
 <pre><code>## Rows: 30
 ## Columns: 6
 ## Groups: city_name [5]
-## $ city_name            &lt;chr&gt; &quot;BRISBANE&quot;, &quot;BRISBANE&quot;, &quot;BRISBANE&quot;, &quot;BRISBANE&quot;, &quot;…
-## $ year                 &lt;dbl&gt; 2014, 2015, 2016, 2017, 2018, 2019, 2014, 2015, 2…
-## $ rainfall_mean        &lt;dbl&gt; 3.843641, 6.174595, 2.092562, 2.719101, 2.468966,…
-## $ rainfall_sd          &lt;dbl&gt; 12.277074, 22.745373, 8.607206, 10.164961, 9.6265…
-## $ rainfall_lower_bound &lt;dbl&gt; 2.9926743, 4.5331087, 1.4654175, 1.9711835, 1.752…
-## $ rainfall_upper_bound &lt;dbl&gt; 4.694608, 7.816081, 2.719706, 3.467019, 3.185393,…</code></pre>
+## $ city_name   &lt;chr&gt; &quot;BRISBANE&quot;, &quot;BRISBANE&quot;, &quot;BRISBANE&quot;, &quot;BRISBANE&quot;, &quot;BRISBANE&quot;…
+## $ year        &lt;dbl&gt; 2014, 2015, 2016, 2017, 2018, 2019, 2014, 2015, 2016, 2017…
+## $ sample_mean &lt;dbl&gt; 3.843641, 6.174595, 2.092562, 2.719101, 2.468966, 2.097333…
+## $ sample_sd   &lt;dbl&gt; 12.277074, 22.745373, 8.607206, 10.164961, 9.626574, 6.348…
+## $ lower_bound &lt;dbl&gt; 2.9926743, 4.5331087, 1.4654175, 1.9711835, 1.7525381, 1.3…
+## $ upper_bound &lt;dbl&gt; 4.694608, 7.816081, 2.719706, 3.467019, 3.185393, 2.818605…</code></pre>
 </div>
 <div id="part-4b" class="section level4">
 <h4>Part 4B</h4>
 <pre class="r"><code># plot the estimates of mean rainfall and the 95% confidence intervals for each city
 rain_df %&gt;%
-  ggplot(aes(x = year, y = rainfall_mean)) +
+  ggplot(aes(x = year, y = sample_mean)) +
   facet_wrap(~city_name, nrow=3, scales=&quot;fixed&quot;) +
   geom_point(color = &quot;#FAAB18&quot;) +
   geom_line(color = &quot;#FAAB18&quot;) +
-  geom_errorbar(aes(ymin = rainfall_lower_bound, ymax = rainfall_upper_bound), width = 0.5, color = &quot;#1380A1&quot;) +
+  geom_errorbar(aes(ymin = lower_bound, ymax = upper_bound), width = 0.5, color = &quot;#1380A1&quot;) +
   labs(title = &quot;Estimates of Mean Rainfall and the 95% Confidence Intervals for Each City in 2014-2019&quot;, subtitle=&quot;Canberra has the least rainfall on average. It rains roughly the same throughout each year.\n Perth has the most rainfall on average. The amount of rainfall varies greatly within each year.\n &quot;, caption=&quot;Yuhan Xiao&quot;, x = &quot;Time (year)&quot;, y = &quot;Average rainfall (millimeters)&quot;) + 
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15),

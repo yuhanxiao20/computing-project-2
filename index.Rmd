@@ -203,10 +203,10 @@ plot_rainfall("PERTH", 2000) +
 rain_df <- df %>% 
   filter(year >= 2014) %>%
   group_by(city_name, year) %>%
-  summarize(rainfall_mean = sample_mean(rainfall),
-         rainfall_sd = sample_sd(rainfall),
-         rainfall_lower_bound = calculate_CI(rainfall)[1],
-         rainfall_upper_bound = calculate_CI(rainfall)[2])
+  summarize(sample_mean = sample_mean(rainfall),
+         sample_sd = sample_sd(rainfall),
+         lower_bound = calculate_CI(rainfall)[1],
+         upper_bound = calculate_CI(rainfall)[2])
   
 # take a look at the data
 glimpse(rain_df)
@@ -216,11 +216,11 @@ glimpse(rain_df)
 ```{r part_4B}
 # plot the estimates of mean rainfall and the 95% confidence intervals for each city
 rain_df %>%
-  ggplot(aes(x = year, y = rainfall_mean)) +
+  ggplot(aes(x = year, y = sample_mean)) +
   facet_wrap(~city_name, nrow=3, scales="fixed") +
   geom_point(color = "#FAAB18") +
   geom_line(color = "#FAAB18") +
-  geom_errorbar(aes(ymin = rainfall_lower_bound, ymax = rainfall_upper_bound), width = 0.5, color = "#1380A1") +
+  geom_errorbar(aes(ymin = lower_bound, ymax = upper_bound), width = 0.5, color = "#1380A1") +
   labs(title = "Estimates of Mean Rainfall and the 95% Confidence Intervals for Each City in 2014-2019", subtitle="Canberra has the least rainfall on average. It rains roughly the same throughout each year.\n Perth has the most rainfall on average. The amount of rainfall varies greatly within each year.\n ", caption="Yuhan Xiao", x = "Time (year)", y = "Average rainfall (millimeters)") + 
   theme_minimal(base_size = 14) +
   theme(plot.title = element_text(hjust = 0.5, vjust = 1, size=15),
